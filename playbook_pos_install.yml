@@ -1,0 +1,5 @@
+---
+- hosts: "{{service_name}}"
+  roles:
+    - pos-online
+  serial: 1

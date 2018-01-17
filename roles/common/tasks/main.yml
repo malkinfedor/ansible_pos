@@ -1,0 +1,70 @@
+---
+- name: upgrade all packages, excluding kernel & foo related packages
+  yum:
+    name: '*'
+    state: latest
+
+
+
+- name: Sevice iptables stop
+  become: yes
+  service:
+    name=iptables
+    state=stopped
+  #ignore_errors: yes 
+  when:  inventory != "production"
+
+- name: Service iptables boot off
+  become: yes
+  service:
+    name=iptables
+    enabled=no
+  ignore_errors: yes
+  register: iptables_status
+  #failed_when: iptables_status.failed == true
+- debug: var=iptables_status
+
+- name: Install libselinux-python
+  become: yes
+  yum:
+    name: libselinux-python
+
+- name: disable SElinux
+  become: yes
+  selinux: state=disabled
+
+
+- name: Create directory
+  become: yes
+  file:
+      state=directory
+      path={{item}}
+  with_items:
+      - "/var/log/omni"
+
+- name: Install soft
+  become: yes
+  yum: name={{item}} state=present
+  with_items:
+      - "unzip-6.0"
+      - "python-httplib2"
+
+- name: Install cpecific soft centos 6.7
+  become: yes
+  yum: name={{item}} state=present
+  with_items:
+      - "wget-1.12"
+  register: installed_soft
+  when: ansible_distribution_version == '6.7'
+
+- name: Install cpecific soft centos 7.4
+  become: yes
+  yum: name={{item}} state=present
+  with_items:
+      - "wget-1.14"
+  register: installed_soft
+  when: ansible_distribution_version >= '7.4'
+- debug: var=ansible_distribution_version
+- name: Checked install soft
+  fail: msg="Please install soft version for centos {{ ansible_distribution_version }}"
+  when: installed_soft is not defined  

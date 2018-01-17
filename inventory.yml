@@ -1,0 +1,7 @@
+[service-pos-online]
+10.0.0.4
+10.0.0.9
+
+[service-pos-online:vars]
+service_name=pos-online
+database_server=test.dbserver.com

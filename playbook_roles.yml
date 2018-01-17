@@ -1,0 +1,4 @@
+---
+- hosts: service-pos-online
+  roles:
+   - common

@@ -1,0 +1,5 @@
+---
+- name: Copy config file
+  become: yes
+  template: src="config.conf" dest="/opt/application/config.conf" mode=0700
+

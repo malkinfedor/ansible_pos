@@ -1,0 +1,12 @@
+---
+- include: playbook_roles.yml
+#- import-playbook: playbook_roles.yml
+  vars:
+   service_name: service-pos-online
+  tags: [common]
+
+- include: playbook_pos_install.yml
+#- import-playbook: playbook_pos_install.yml
+  vars:
+   service_name: service-pos-online
+  tags: [pos]

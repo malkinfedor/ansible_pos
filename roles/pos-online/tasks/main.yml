@@ -1,0 +1,15 @@
+---
+- name: Create user
+  become: yes
+  user: name="{{service_name}}" createhome=yes home=/opt/{{service_name}}
+
+- name: Copy config file
+  template: src=config.conf dest=/etc/httpd/conf.test1
+  register: copy_conf
+  #notify: 
+  #- restart httpd 
+- debug: var=copy_conf
+
+- name: Restart httpd does'n handle
+  service: name=httpd state=restar state=restarted
+  when: copy_conf.changed != false

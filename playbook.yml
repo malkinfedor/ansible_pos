@@ -1,0 +1,34 @@
+---
+- hosts: "service-pos-online"
+  tasks:
+   - name: Create user
+     become: yes
+     user: name={{service_name}}-test home=/opt/{{service_name}} createhome=yes
+     register: result_user_created
+     tags: pos
+     vars:
+      dependencies:
+       services: pos-scheduler
+   - debug: var=result_user_created
+
+   - name: Create app dir
+     file: path=/opt/application/ state=directory
+   - name: Create app dir_2
+     vars:
+      dependencies:
+       services: pos-scheduler
+     file: path=/opt/application/{{dependencies.services}} state=directory
+   - name: Install httpd
+     yum: name=httpd
+     register: result
+#   - debug: var=result
+   - name: Copy config file
+     template: src="config.conf" dest="/opt/application/config.conf" mode=0700
+     when: result.changed == false  
+#   - name: Check httpd exist
+#     stat:
+#      path: /etc/httpd
+#     register: httpd_exist
+#   - debug: var=httpd_exist  
+#   - debug:
+#      var: installed_httpd_result.stderr_lines
